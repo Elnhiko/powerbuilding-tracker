@@ -1,7 +1,7 @@
 // Service worker : permet d'utiliser l'app hors-ligne.
 // Stratégie "réseau d'abord" : si tu as du réseau, tu reçois toujours la
 // dernière version publiée ; sinon, la version en cache est utilisée.
-const CACHE_NAME = 'pb-tracker-v3';
+const CACHE_NAME = 'pb-tracker-v4';
 const ASSETS = [
   './',
   './index.html',
@@ -9,6 +9,7 @@ const ASSETS = [
   './css/style.css',
   './js/program.js',
   './js/app.js',
+  './js/progress.js',
   './js/vendor/supabase.min.js',
   './js/config.js',
   './js/sync.js',
