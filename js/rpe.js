@@ -71,6 +71,7 @@ function setTopSet(ei, field, val) {
   if (val === "") delete c[field][k]; else c[field][k] = val;
   saveState();
   updateEst(ei);
+  updateCalc(ei); // le backoff du deload dépend du 1RM estimé
 }
 
 // Met à jour le 1RM estimé sans tout ré-afficher (évite de fermer le clavier)
