@@ -123,4 +123,6 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 .hist-rm .val{font-size:15px;font-weight:700;}
 .hist-meta{font-size:11px;color:var(--d);}
 .btn-consult{margin-top:8px;padding:6px 14px;border-radius:8px;border:1px solid var(--b);background:transparent;color:var(--d);font-size:11px;cursor:pointer;font-family:inherit;}
+.hist-actions{display:flex;gap:8px;}
+.btn-delete{color:var(--r);border-color:rgba(230,57,70,.35);}
 .badge-en-cours{font-size:10px;font-weight:700;color:var(--a);margin-left:8px;padding:2px 8px;background:rgba(255,107,53,.15);border-radius:10px;}
