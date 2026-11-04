@@ -51,7 +51,10 @@
     if (state.ci >= state.cycles.length) state.ci = state.cycles.length - 1;
     try { localStorage.setItem("pb-v2", JSON.stringify(state)); } catch (e) {}
     if (document.getElementById("v-train").classList.contains("active")) render();
-    else if (document.getElementById("v-history").classList.contains("active")) renderHistory();
+    else if (document.getElementById("v-history").classList.contains("active")) {
+      renderHistory();
+      if (window.renderProgress) renderProgress();
+    }
   }
 
   // ── Synchronisation (compare local / cloud, garde le plus récent) ──

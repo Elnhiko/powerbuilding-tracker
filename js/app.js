@@ -21,7 +21,7 @@ function showView(id){
   document.getElementById("timer-bar").style.display=id==="v-train"?"block":"none";
 }
 function showTrain(){showView("v-train");render();}
-function showHistory(){showView("v-history");renderHistory();}
+function showHistory(){showView("v-history");renderHistory();if(window.renderProgress)renderProgress();}
 
 // ═══ RENDER ═══
 function render(){
