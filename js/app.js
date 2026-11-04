@@ -6,7 +6,11 @@ var timerInterval=null,timerSec=0,timerTarget=180,timerOn=false,audioCtx=null;
 function loadState(){
   try{var d=localStorage.getItem("pb-v2");if(d){var p=JSON.parse(d);if(p.cycles&&p.cycles.length)state=p;}}catch(e){}
 }
-function saveState(){try{localStorage.setItem("pb-v2",JSON.stringify(state));}catch(e){}}
+function saveState(){
+  state.updatedAt=Date.now();
+  try{localStorage.setItem("pb-v2",JSON.stringify(state));}catch(e){}
+  if(window.PBSync)PBSync.onLocalChange(); // synchro cloud (js/sync.js)
+}
 
 function cyc(){return state.cycles[state.ci];}
 

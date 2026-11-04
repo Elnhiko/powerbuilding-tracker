@@ -38,10 +38,25 @@ L'app s'ouvre alors en plein écran, comme une app native, et marche sans résea
 
 ## Données
 
-Les charges et l'historique sont enregistrés **dans le navigateur de chaque appareil**
-(`localStorage`, clé `pb-v2`). Ils ne sont pas synchronisés entre le PC et le
-téléphone, et ils ne sont pas envoyés sur GitHub. Si tu vides les données du
-navigateur ou que tu désinstalles l'app, ils sont perdus.
+Les données sont toujours gardées **sur l'appareil** (`localStorage`, clé `pb-v2`)
+pour que l'app marche hors-ligne. Si tu te connectes (bouton **Compte**), elles sont
+aussi **sauvegardées en ligne avec Supabase** et synchronisées entre tes appareils.
+Si tu modifies les données sur deux appareils, c'est la modification la plus récente qui est gardée.
+
+Voyant à côté de « Compte » : vert = synchronisé, orange = envoi en attente,
+rouge = hors-ligne / erreur, gris = non connecté.
+
+### Mise en place de Supabase (une seule fois)
+
+1. Créer un projet gratuit sur https://supabase.com
+2. **SQL Editor → New query** : coller le contenu de `supabase/schema.sql` → **Run**
+3. **Authentication → URL Configuration** : *Site URL* =
+   `https://elnhiko.github.io/powerbuilding-tracker/`
+4. **Project Settings → API** : copier *Project URL* et la clé *anon / publishable*
+   dans `js/config.js` (jamais la clé *service_role / secret*).
+
+Pour consulter tes charges directement dans Supabase : **Table Editor** → vue `charges`
+(une ligne par exercice saisi : cycle, semaine, jour, charge, fait).
 
 ## Mettre à jour l'app
 
