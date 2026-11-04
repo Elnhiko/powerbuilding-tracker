@@ -99,36 +99,79 @@ function setWeight(ei,val){var k=cyc().week+"-"+cyc().day+"-"+ei;cyc().weights[k
 // ═══ TIMER ═══
 function fmtTime(s){return Math.floor(s/60)+":"+String(s%60).padStart(2,"0");}
 
+// Le temps écoulé est calculé à partir de l'heure de départ (et non en comptant
+// les secondes) : le timer reste juste même si l'écran est verrouillé ou si
+// l'app passe en arrière-plan. Le départ est mémorisé pour survivre à une
+// fermeture de l'app par le téléphone.
+var timerStart=0,TIMER_KEY="pb-timer";
+
 function startTimer(t){
-  timerTarget=t;timerSec=0;timerOn=true;
+  // Débloque le son maintenant (appui utilisateur), sinon iOS peut le bloquer à la fin
+  try{
+    if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==="suspended")audioCtx.resume();
+  }catch(e){}
+  runTimer(Date.now(),t);
+}
+
+function runTimer(start,t){
+  timerStart=start;timerTarget=t;timerOn=true;
+  try{localStorage.setItem(TIMER_KEY,JSON.stringify({start:start,target:t}));}catch(e){}
   document.getElementById("timer-presets").style.display="none";
   document.getElementById("timer-running").style.display="flex";
-  updateTimerDisplay();
   clearInterval(timerInterval);
-  timerInterval=setInterval(function(){
-    timerSec++;
-    updateTimerDisplay();
-    if(timerSec>=timerTarget){
-      clearInterval(timerInterval);timerOn=false;
-      try{
-        if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-        [0,.18,.36].forEach(function(d){
-          var o=audioCtx.createOscillator(),g=audioCtx.createGain();
-          o.connect(g);g.connect(audioCtx.destination);
-          o.frequency.value=880;g.gain.value=.3;
-          o.start(audioCtx.currentTime+d);o.stop(audioCtx.currentTime+d+.1);
-        });
-      }catch(e){}
-      if(navigator.vibrate)navigator.vibrate([200,100,200,100,200]);
-    }
-  },1000);
+  tickTimer();
+  if(timerOn)timerInterval=setInterval(tickTimer,250);
+}
+
+function tickTimer(){
+  if(!timerOn)return;
+  var elapsed=Math.floor((Date.now()-timerStart)/1000);
+  timerSec=Math.min(Math.max(elapsed,0),timerTarget);
+  updateTimerDisplay();
+  if(elapsed>=timerTarget){
+    clearInterval(timerInterval);timerOn=false;
+    try{localStorage.removeItem(TIMER_KEY);}catch(e){}
+    // Bip + vibration seulement si on est là au moment où ça se termine
+    // (pas 10 minutes plus tard en rouvrant l'app)
+    var late=Date.now()-(timerStart+timerTarget*1000);
+    if(late<5000)timerAlert();
+  }
+}
+
+function timerAlert(){
+  try{
+    if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state==="suspended")audioCtx.resume();
+    [0,.18,.36].forEach(function(d){
+      var o=audioCtx.createOscillator(),g=audioCtx.createGain();
+      o.connect(g);g.connect(audioCtx.destination);
+      o.frequency.value=880;g.gain.value=.3;
+      o.start(audioCtx.currentTime+d);o.stop(audioCtx.currentTime+d+.1);
+    });
+  }catch(e){}
+  if(navigator.vibrate)navigator.vibrate([200,100,200,100,200]);
 }
 
 function stopTimer(){
   clearInterval(timerInterval);timerOn=false;timerSec=0;
+  try{localStorage.removeItem(TIMER_KEY);}catch(e){}
   document.getElementById("timer-presets").style.display="flex";
   document.getElementById("timer-running").style.display="none";
 }
+
+function restoreTimer(){
+  try{
+    var s=JSON.parse(localStorage.getItem(TIMER_KEY));
+    if(s&&s.start&&s.target&&Date.now()-s.start<s.target*1000)runTimer(s.start,s.target);
+    else localStorage.removeItem(TIMER_KEY);
+  }catch(e){}
+}
+
+// Mise à jour immédiate au retour sur l'app (écran déverrouillé)
+document.addEventListener("visibilitychange",function(){
+  if(document.visibilityState==="visible")tickTimer();
+});
 
 function updateTimerDisplay(){
   var done=timerSec>=timerTarget;
@@ -252,3 +295,4 @@ function confirmNewCycle(useEst){
 // ═══ INIT ═══
 loadState();
 render();
+restoreTimer();
