@@ -158,13 +158,32 @@ function renderHistory(){
     });
     html+="</div>";
     html+='<div class="hist-meta">'+dn+" exercices complétés</div>";
-    if(!isCur)html+='<button class="btn-consult" onclick="consultCycle('+idx+')">Consulter</button>';
+    var canDel=state.cycles.length>1;
+    if(!isCur||canDel){
+      html+='<div class="hist-actions">';
+      if(!isCur)html+='<button class="btn-consult" onclick="consultCycle('+idx+')">Consulter</button>';
+      if(canDel)html+='<button class="btn-consult btn-delete" onclick="deleteCycle('+idx+')">Supprimer</button>';
+      html+="</div>";
+    }
     html+="</div>";
   });
   document.getElementById("history-list").innerHTML=html;
 }
 
 function consultCycle(idx){state.ci=idx;saveState();showTrain();}
+
+function deleteCycle(idx){
+  if(state.cycles.length<=1)return;
+  if(!confirm("Supprimer le Cycle "+(idx+1)+" ?\n\nToutes ses charges seront perdues. Cette action est irréversible."))return;
+  var wasLast=idx===state.cycles.length-1;
+  state.cycles.splice(idx,1);
+  // Si on supprime le cycle en cours, le précédent redevient le cycle en cours
+  if(wasLast)delete state.cycles[state.cycles.length-1].ended;
+  if(state.ci>idx||state.ci>=state.cycles.length)state.ci--;
+  else if(state.ci===idx)state.ci=state.cycles.length-1;
+  saveState();
+  renderHistory();
+}
 
 // ═══ NEW CYCLE ═══
 var pendingEstimates=null;
