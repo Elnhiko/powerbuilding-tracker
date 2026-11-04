@@ -134,6 +134,12 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 .est-sub{font-size:12px;color:var(--d);margin-top:3px;}
 .est-sub b{color:var(--t);}
 
+/* Disques / backoff */
+.calc-box:empty{display:none;}
+.calc-box{margin-top:6px;}
+.calc-line{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--d);padding:2px 0;}
+.calc-line b{color:var(--t);font-weight:600;text-align:right;font-variant-numeric:tabular-nums;}
+
 /* Onglets segmentés */
 .seg{display:flex;gap:4px;padding:4px;background:var(--s);border:1px solid var(--b);border-radius:12px;margin-bottom:16px;}
 .seg-btn{flex:1;padding:9px 0;border:none;border-radius:9px;background:transparent;color:var(--d);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
