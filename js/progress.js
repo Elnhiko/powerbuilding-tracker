@@ -27,8 +27,11 @@ function progFmt(n) { return (Math.round(n * 10) / 10).toString().replace(".", "
 
 // Charges S1–S6 d'un cycle pour le mouvement / type sélectionné
 function progSeries(cycle) {
-  var m = LIFT_MAP[LIFTS[progLift]], slot = progKind === "main" ? m.main : m.sec, out = [];
-  for (var w = 0; w < 6; w++) out.push(progNum(cycle.weights[w + "-" + slot[0] + "-" + slot[1]]));
+  var m = LIFT_MAP[LIFTS[progLift]], slot = progKind === "sec" ? m.sec : m.main, out = [];
+  for (var w = 0; w < 6; w++) {
+    var k = w + "-" + slot[0] + "-" + slot[1];
+    out.push(progKind === "e1rm" ? e1rmFor(cycle, k) : progNum(cycle.weights[k]));
+  }
   return out;
 }
 
@@ -48,8 +51,10 @@ function renderProgress() {
   });
   h += "</div>";
   h += '<div class="seg seg-sm">' +
-    '<button class="seg-btn' + (progKind === "main" ? " active" : "") + '" onclick="setProgKind(\'main\')">Top set (principal)</button>' +
+    '<button class="seg-btn' + (progKind === "main" ? " active" : "") + '" onclick="setProgKind(\'main\')">Top set</button>' +
+    '<button class="seg-btn' + (progKind === "e1rm" ? " active" : "") + '" onclick="setProgKind(\'e1rm\')">1RM estimé</button>' +
     '<button class="seg-btn' + (progKind === "sec" ? " active" : "") + '" onclick="setProgKind(\'sec\')">Secondaire</button></div>';
+  var isE = progKind === "e1rm";
 
   // Séries : dernier cycle + précédent
   var n = state.cycles.length;
@@ -61,24 +66,27 @@ function renderProgress() {
   var curVals = cur.vals.filter(function (v) { return v; });
   var lastV = curVals.length ? curVals[curVals.length - 1] : null;
   // Progression du cycle : S1 → dernière semaine saisie hors deload (S1–S5)
-  var loadVals = cur.vals.slice(0, 5).filter(function (v) { return v; });
+  // (le 1RM estimé reste comparable en deload : on garde S6)
+  var loadVals = cur.vals.slice(0, isE ? 6 : 5).filter(function (v) { return v; });
   var firstV = loadVals.length ? loadVals[0] : null;
   var progV = loadVals.length > 1 ? loadVals[loadVals.length - 1] - firstV : null;
   var rms = state.cycles.map(function (c) { return get1RMs(c)[lift] || null; });
   var bestRM = rms.reduce(function (a, b) { return b && (!a || b > a) ? b : a; }, null);
   h += '<div class="prog-tiles">' +
-    tile("Dernière charge", lastV ? progFmt(lastV) + " kg" : "—", "Cycle " + n) +
+    tile(isE ? "Dernier 1RM estimé" : "Dernière charge", lastV ? progFmt(lastV) + " kg" : "—", "Cycle " + n) +
     tile("Progression cycle", progV !== null ? (progV >= 0 ? "+" : "") + progFmt(progV) + " kg" : "—", "depuis S1") +
     tile("Record 1RM", bestRM ? progFmt(bestRM) + " kg" : "—", "testé en S7") +
     "</div>";
 
   // Graphique
   h += '<div class="summary-card"><div class="summary-label">' + shortName(lift) + " — " +
-    (progKind === "main" ? "top set" : "secondaire") + " par semaine</div>";
+    ({ main: "top set", e1rm: "1RM estimé", sec: "secondaire" })[progKind] + " par semaine</div>";
   var all = [];
   series.forEach(function (s) { s.vals.forEach(function (v) { if (v) all.push(v); }); });
   if (!all.length) {
-    h += '<div class="acc-text">Pas encore de charge saisie pour ce mouvement. Elles apparaîtront ici au fil des séances.</div>';
+    h += '<div class="acc-text">' + (isE
+      ? "Saisis la charge, les reps et le RPE de ton top set pour voir ton 1RM estimé semaine après semaine."
+      : "Pas encore de charge saisie pour ce mouvement. Elles apparaîtront ici au fil des séances.") + "</div>";
   } else {
     if (series.length > 1) {
       h += '<div class="prog-legend">';

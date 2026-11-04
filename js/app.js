@@ -77,6 +77,7 @@ function render(){
       html+='<div class="weight-row"><div class="weight-label">Charge :</div>';
       html+='<div class="weight-wrap"><input type="number" inputmode="decimal" class="weight-input" placeholder="—" value="'+weight+'" onchange="setWeight('+i+',this.value)" onblur="setWeight('+i+',this.value)"><span class="weight-unit">kg</span></div></div>';
       if(prev&&!weight)html+='<div class="prev-hint">↳ '+prev+"</div>";
+      if(ex.type==="main")html+=topSetHTML(c,w,i); // reps / RPE réels + 1RM estimé (js/rpe.js)
     }
     html+="</div>";
   });
@@ -94,7 +95,7 @@ function getPrevHint(wi,di,ei){
 function setWeek(i){cyc().week=i;cyc().day=0;saveState();render();}
 function setDay(i){cyc().day=i;saveState();render();}
 function toggleDone(ei){var k=cyc().week+"-"+cyc().day+"-"+ei;cyc().done[k]=!cyc().done[k];saveState();render();}
-function setWeight(ei,val){var k=cyc().week+"-"+cyc().day+"-"+ei;cyc().weights[k]=val;saveState();}
+function setWeight(ei,val){var k=cyc().week+"-"+cyc().day+"-"+ei;cyc().weights[k]=val;saveState();updateEst(ei);}
 
 // ═══ TIMER ═══
 function fmtTime(s){return Math.floor(s/60)+":"+String(s%60).padStart(2,"0");}

@@ -125,6 +125,15 @@ input::-webkit-outer-spin-button,input::-webkit-inner-spin-button{-webkit-appear
 .btn-consult{margin-top:8px;padding:6px 14px;border-radius:8px;border:1px solid var(--b);background:transparent;color:var(--d);font-size:11px;cursor:pointer;font-family:inherit;}
 .hist-actions{display:flex;gap:8px;}
 
+/* Top set : reps / RPE réels + 1RM estimé */
+.rpe-select{padding-right:12px;appearance:none;-webkit-appearance:none;}
+.est-box:empty{display:none;}
+.est-box{margin-top:8px;padding:8px 10px;background:var(--bg);border-radius:8px;}
+.est-line{font-size:13px;color:var(--t);}
+.est-line b{color:var(--a);}
+.est-sub{font-size:12px;color:var(--d);margin-top:3px;}
+.est-sub b{color:var(--t);}
+
 /* Onglets segmentés */
 .seg{display:flex;gap:4px;padding:4px;background:var(--s);border:1px solid var(--b);border-radius:12px;margin-bottom:16px;}
 .seg-btn{flex:1;padding:9px 0;border:none;border-radius:9px;background:transparent;color:var(--d);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
