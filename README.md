@@ -28,17 +28,6 @@ le mode hors-ligne (service worker) demande un petit serveur local, au choix :
 
 Le plus simple reste souvent de tester directement sur l'URL GitHub Pages.
 
-## Mise en ligne (GitHub Pages)
-
-1. Pousser le code sur la branche `main`.
-2. Sur GitHub : **Settings → Pages → Build and deployment**
-   - Source : *Deploy from a branch*
-   - Branch : `main` / `/ (root)` → **Save**
-3. Au bout d'une minute environ, l'app est en ligne sur
-   **https://elnhiko.github.io/powerbuilding-tracker/**
-
-Chaque `git push` sur `main` met le site à jour automatiquement.
-
 ## Installer sur le téléphone
 
 - **iPhone (Safari)** : ouvrir l'URL → bouton Partager → *Sur l'écran d'accueil*.
